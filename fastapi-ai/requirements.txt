@@ -1,0 +1,31 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# AI/ML Core
+torch==2.1.2
+transformers==4.37.0
+sentence-transformers==2.3.1
+scikit-learn==1.4.0
+prophet==1.1.5
+
+# Vector DB & RAG
+chromadb==0.4.22
+langchain==0.1.0
+langchain-community==0.0.13
+
+# Data Processing
+pandas==2.2.0
+numpy==1.26.3
+
+# Database & Cache
+asyncpg==0.29.0
+redis==5.0.1
+sqlalchemy==2.0.25
+
+# Monitoring
+prometheus-client==0.19.0
+
+# HTTP Client
+httpx==0.26.0
