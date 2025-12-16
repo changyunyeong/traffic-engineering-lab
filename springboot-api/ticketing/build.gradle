@@ -27,8 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Database
-    implementation 'org.postgresql:postgresql'
-    implementation 'com.zaxxer:HikariCP:5.1.0'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // Redis & Distributed Lock
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

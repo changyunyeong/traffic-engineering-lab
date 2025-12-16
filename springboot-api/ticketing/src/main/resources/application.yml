@@ -2,71 +2,46 @@ spring:
   application:
     name: ticketing-api
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ticketing}
-    username: ${SPRING_DATASOURCE_USERNAME:admin}
-    password: ${SPRING_DATASOURCE_PASSWORD:admin123}
-    hikari:
-      maximum-pool-size: 50
-      minimum-idle: 10
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+  profiles:
+    active: local
 
   jpa:
-    hibernate:
-      ddl-auto: update
+    open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         default_batch_fetch_size: 100
-    show-sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
 
-  data:
-    redis:
-      host: ${SPRING_REDIS_HOST:localhost}
-      port: ${SPRING_REDIS_PORT:6379}
-      timeout: 3000ms
-      lettuce:
-        pool:
-          max-active: 50
-          max-idle: 20
-          min-idle: 5
-
-  kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: 1
-      retries: 3
-    consumer:
-      group-id: ticketing-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,prometheus,metrics,info
-  metrics:
-    tags:
-      application: ${spring.application.name}
-  prometheus:
+  # Actuator 설정
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,prometheus,metrics,info
     metrics:
       export:
-        enabled: true
+        prometheus:
+          enabled: true
+      tags:
+        application: ${spring.application.name}
 
-fastapi:
-  url: ${FASTAPI_URL:http://localhost:8000}
-
+# Logging
 logging:
   level:
+    root: INFO
     com.ticketing: INFO
     org.springframework.kafka: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
