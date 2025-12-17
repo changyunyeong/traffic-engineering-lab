@@ -5,9 +5,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://127.0.0.1:3306/ticketing}
-    username: ${SPRING_DATASOURCE_USERNAME:admin}
-    password: ${SPRING_DATASOURCE_PASSWORD:root}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       maximum-pool-size: 50
       minimum-idle: 10
@@ -26,8 +26,8 @@ spring:
 
   data:
     redis:
-      host: ${SPRING_REDIS_HOST:redis-master}
-      port: ${SPRING_REDIS_PORT:6379}
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
       timeout: 3000ms
       lettuce:
         pool:
@@ -36,7 +36,7 @@ spring:
           min-idle: 5
 
   kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9093}
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
 
 server:
   port: 8080
@@ -45,3 +45,19 @@ server:
       max: 200
       min-spare: 10
     accept-count: 100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

@@ -22,6 +22,12 @@ spring:
       web:
         exposure:
           include: health,prometheus,metrics,info
+        base-path: /actuator
+    endpoint:
+        health:
+            show-details: always
+        prometheus:
+            enabled: true
     metrics:
       export:
         prometheus:
