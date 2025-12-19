@@ -1,0 +1,126 @@
+{
+  "dashboard": {
+    "title": "티켓팅 시스템 모니터링",
+    "tags": ["ticketing", "performance"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "API 요청 속도 (RPS)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_count{application=\"ticketing-api\"}[1m])",
+            "legendFormat": "{{uri}}"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8}
+      },
+      {
+        "id": 2,
+        "title": "API 응답 시간 (P95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{application=\"ticketing-api\"}[5m]))",
+            "legendFormat": "{{uri}}"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8}
+      },
+      {
+        "id": 3,
+        "title": "에러율",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_server_requests_seconds_count{application=\"ticketing-api\",status=~\"5..\"}[1m])",
+            "legendFormat": "5xx 에러"
+          },
+          {
+            "expr": "rate(http_server_requests_seconds_count{application=\"ticketing-api\",status=~\"4..\"}[1m])",
+            "legendFormat": "4xx 에러"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8}
+      },
+      {
+        "id": 4,
+        "title": "JVM 메모리 사용량",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "jvm_memory_used_bytes{application=\"ticketing-api\",area=\"heap\"}",
+            "legendFormat": "Heap Used"
+          },
+          {
+            "expr": "jvm_memory_max_bytes{application=\"ticketing-api\",area=\"heap\"}",
+            "legendFormat": "Heap Max"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8}
+      },
+      {
+        "id": 5,
+        "title": "데이터베이스 커넥션 풀",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "hikaricp_connections_active{application=\"ticketing-api\"}",
+            "legendFormat": "Active"
+          },
+          {
+            "expr": "hikaricp_connections_idle{application=\"ticketing-api\"}",
+            "legendFormat": "Idle"
+          },
+          {
+            "expr": "hikaricp_connections{application=\"ticketing-api\"}",
+            "legendFormat": "Total"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8}
+      },
+      {
+        "id": 6,
+        "title": "Redis 명령 실행 시간",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(redis_commands_duration_seconds_sum[1m]) / rate(redis_commands_duration_seconds_count[1m])",
+            "legendFormat": "평균 실행 시간"
+          }
+        ],
+        "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8}
+      },
+      {
+        "id": 7,
+        "title": "예약 성공률",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "(rate(http_server_requests_seconds_count{uri=\"/api/v1/reservations\",status=\"200\"}[5m]) / rate(http_server_requests_seconds_count{uri=\"/api/v1/reservations\"}[5m])) * 100",
+            "legendFormat": "성공률 (%)"
+          }
+        ],
+        "gridPos": {"x": 0, "y": 24, "w": 6, "h": 4}
+      },
+      {
+        "id": 8,
+        "title": "활성 스레드",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "jvm_threads_live{application=\"ticketing-api\"}",
+            "legendFormat": "Live Threads"
+          }
+        ],
+        "gridPos": {"x": 6, "y": 24, "w": 6, "h": 4}
+      }
+    ],
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}
