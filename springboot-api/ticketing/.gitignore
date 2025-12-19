@@ -44,3 +44,6 @@ out/
 # 민감한 설정 파일
 src/main/resources/application-local.yml
 prometheus
+
+# db 관련 파일
+*.sql
