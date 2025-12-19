@@ -1,10 +1,12 @@
 package com.ticketing.domain.event.service;
 
-import com.ticketing.domain.event.domain.Event;
+import com.ticketing.domain.event.entity.Event;
 import com.ticketing.domain.event.dto.EventCreateRequest;
 import com.ticketing.domain.event.dto.EventResponse;
 import com.ticketing.domain.event.repository.EventRepository;
 import com.ticketing.domain.ticket.repository.TicketRepository;
+import com.ticketing.global.enums.Category;
+import com.ticketing.global.exception.domain.event.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,6 +32,7 @@ public class EventService {
      */
     @Transactional
     public EventResponse createEvent(EventCreateRequest request) {
+
         Event event = Event.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -40,26 +43,28 @@ public class EventService {
                 .build();
 
         event = eventRepository.save(event);
-        log.info("Event created: id={}, title={}", event.getId(), event.getTitle());
+//        log.info("Event created: id={}, title={}", event.getId(), event.getTitle());
 
         return convertToResponse(event);
     }
 
     /**
-     * 이벤트 조회 (캐싱)
+     * 이벤트 조회
      */
     @Cacheable(value = "events", key = "#id")
     public EventResponse getEvent(Long id) {
+
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("이벤트를 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new EventNotFoundException(id));
 
         return convertToResponse(event);
     }
 
     /**
-     * 전체 이벤트 조회 (페이징)
+     * 전체 이벤트 조회
      */
     public Page<EventResponse> getAllEvents(Pageable pageable) {
+
         return eventRepository.findAll(pageable)
                 .map(this::convertToResponse);
     }
@@ -67,7 +72,8 @@ public class EventService {
     /**
      * 카테고리별 조회
      */
-    public Page<EventResponse> getEventsByCategory(String category, Pageable pageable) {
+    public Page<EventResponse> getEventsByCategory(Category category, Pageable pageable) {
+
         return eventRepository.findByCategory(category, pageable)
                 .map(this::convertToResponse);
     }
@@ -76,6 +82,7 @@ public class EventService {
      * 예정된 이벤트 조회
      */
     public List<EventResponse> getUpcomingEvents() {
+
         return eventRepository.findUpcomingEvents(LocalDateTime.now()).stream()
                 .map(this::convertToResponse)
                 .toList();
@@ -85,6 +92,7 @@ public class EventService {
      * 이벤트 검색
      */
     public Page<EventResponse> searchEvents(String keyword, Pageable pageable) {
+
         return eventRepository.findByTitleContainingIgnoreCase(keyword, pageable)
                 .map(this::convertToResponse);
     }
@@ -93,6 +101,7 @@ public class EventService {
      * Entity -> Response 변환
      */
     private EventResponse convertToResponse(Event event) {
+
         Long totalStock = ticketRepository.getTotalStockByEventId(event.getId());
 
         return EventResponse.builder()

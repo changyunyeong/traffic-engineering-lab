@@ -1,6 +1,6 @@
 package com.ticketing.domain.reservation.repository;
 
-import com.ticketing.domain.reservation.domain.Reservation;
+import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.global.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
@@ -29,7 +28,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.createdAt < :expiryTime")
     List<Reservation> findExpiredReservations(@Param("expiryTime") LocalDateTime expiryTime);
 
-    // 사용자의 특정 티켓 활성 예약 확인 (List로 변경)
+    // 사용자의 특정 티켓 활성 예약 확인
     @Query("SELECT r FROM Reservation r " +
             "WHERE r.user.id = :userId " +
             "AND r.ticket.id = :ticketId " +

@@ -1,6 +1,6 @@
 package com.ticketing.domain.user.repository;
 
-import com.ticketing.domain.user.domain.User;
+import com.ticketing.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

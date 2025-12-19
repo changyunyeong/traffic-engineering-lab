@@ -1,6 +1,6 @@
 package com.ticketing.domain.ticket.repository;
 
-import com.ticketing.domain.ticket.domain.Ticket;
+import com.ticketing.domain.ticket.entity.Ticket;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

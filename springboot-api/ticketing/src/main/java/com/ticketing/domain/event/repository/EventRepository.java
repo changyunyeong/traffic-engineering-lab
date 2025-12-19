@@ -1,6 +1,7 @@
 package com.ticketing.domain.event.repository;
 
-import com.ticketing.domain.event.domain.Event;
+import com.ticketing.domain.event.entity.Event;
+import com.ticketing.global.enums.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     // 카테고리별 조회
-    Page<Event> findByCategory(String category, Pageable pageable);
+    Page<Event> findByCategory(Category category, Pageable pageable);
 
     // 제목 검색 (대소문자 무시)
     Page<Event> findByTitleContainingIgnoreCase(String title, Pageable pageable);
