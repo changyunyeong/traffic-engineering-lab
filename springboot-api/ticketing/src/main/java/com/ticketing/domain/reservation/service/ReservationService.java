@@ -43,9 +43,9 @@ public class ReservationService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private static final String STOCK_KEY_PREFIX = "ticket:stock:";
-    private static final String LOCK_KEY_PREFIX = "ticket:lock:";
-    private static final int LOCK_WAIT_TIME = 10;
-    private static final int LOCK_LEASE_TIME = 10;
+    private static final String USER_TICKET_LOCK_PREFIX = "reservation:user:";
+    private static final int LOCK_WAIT_TIME = 3;
+    private static final int LOCK_LEASE_TIME = 5;
 
     /**
      * 티켓 예약 - 분산 락 기반 동시성 제어
@@ -59,11 +59,26 @@ public class ReservationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        Ticket ticket = ticketRepository.findById(ticketId)
+        Ticket ticket = ticketRepository.findByIdWithLock(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException(ticketId));
 
-        // 분산 락으로 동시성 제어
-        String lockKey = LOCK_KEY_PREFIX + ticketId;
+        // 1. 먼저 Redis에서 원자적 재고 차감 시도 (락 외부에서 수행)
+        String stockKey = STOCK_KEY_PREFIX + ticketId;
+        Long remaining = decrementStockAtomic(stockKey, ticket);
+
+        if (remaining == null || remaining < 0) {
+            // 재고 부족 - 차감된 경우 복구
+            if (remaining != null && remaining < 0) {
+                incrementStock(stockKey);
+            }
+            log.warn("Out of stock: ticketId={}, remaining={}", ticketId, remaining);
+            throw new OutOfStockException();
+        }
+
+        log.debug("Stock decremented in Redis: ticketId={}, remaining={}", ticketId, remaining);
+
+        // 2. 사용자+티켓 단위 락으로 중복 예약만 방지
+        String lockKey = USER_TICKET_LOCK_PREFIX + userId + ":ticket:" + ticketId;
 
         try {
             return lockExecutor.executeWithLock(lockKey, LOCK_WAIT_TIME, LOCK_LEASE_TIME, () -> {
@@ -72,33 +87,14 @@ public class ReservationService {
                         reservationRepository.findActiveReservations(userId, ticketId);
 
                 if (!activeReservations.isEmpty()) {
+                    // 중복 예약 - Redis 재고 복구
+                    incrementStock(stockKey);
                     log.warn("Duplicate reservation attempt: userId={}, ticketId={}, count={}",
                             userId, ticketId, activeReservations.size());
                     throw new DuplicateReservationException();
                 }
 
-                // Redis에서 재고 확인 및 차감
-                String stockKey = STOCK_KEY_PREFIX + ticketId;
-                Long stock = getStockFromRedis(stockKey, ticket);
-
-                // 재고 확인
-                if (stock == null || stock <= 0) {
-                    log.warn("Out of stock: ticketId={}, stock={}", ticketId, stock);
-                    throw new OutOfStockException();
-                }
-
-                // Redis 재고 차감
-                Long remaining = decrementStock(stockKey);
-
-                if (remaining == null || remaining < 0) {
-                    // 재고 복구
-                    incrementStock(stockKey);
-                    log.warn("Stock decrement failed: ticketId={}, remaining={}", ticketId, remaining);
-                    throw new OutOfStockException();
-                }
-
-                log.info("Stock decremented in Redis: ticketId={}, remaining={}", ticketId, remaining);
-
+                // 3. 예약 생성
                 Reservation reservation = Reservation.builder()
                         .ticket(ticket)
                         .user(user)
@@ -107,28 +103,34 @@ public class ReservationService {
 
                 reservation = reservationRepository.save(reservation);
 
-                // db 및 redis 동기화
+                // 4. DB 재고 동기화
                 try {
                     ticket.decreaseStock();
                     ticketRepository.save(ticket);
                 } catch (Exception e) {
                     log.error("Failed to decrease DB stock, rolling back Redis stock: ticketId={}", ticketId, e);
-                    // Redis 재고 복구
                     incrementStock(stockKey);
                     throw new RuntimeException("재고 차감 중 오류가 발생했습니다", e);
                 }
 
-                // Kafka 이벤트 발행
+                // 5. Kafka 이벤트 발행
                 publishReservationEvent(reservation, "CREATED");
 
-                log.info("Reservation created successfully: id={}, userId={}, ticketId={}",
-                        reservation.getId(), userId, ticketId);
+                log.info("Reservation created successfully: id={}, userId={}, ticketId={}, remaining={}",
+                        reservation.getId(), userId, ticketId, remaining);
 
                 return convertToResponse(reservation);
             });
+        } catch (DuplicateReservationException e) {
+            // 중복 예약 예외는 그대로 전파 (이미 재고 복구됨)
+            throw e;
         } catch (Exception e) {
-            log.error("Reservation failed: userId={}, ticketId={}, error={}",
-                    userId, ticketId, e.getMessage(), e);
+            // 락 획득 실패 등 다른 예외 발생 시 재고 복구
+            if (!(e instanceof DuplicateReservationException)) {
+                incrementStock(stockKey);
+                log.error("Reservation failed, stock restored: userId={}, ticketId={}, error={}",
+                        userId, ticketId, e.getMessage());
+            }
             throw e;
         }
     }
@@ -182,6 +184,28 @@ public class ReservationService {
         } catch (Exception e) {
             log.error("Failed to decrement stock in Redis: key={}, error={}",
                     stockKey, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Redis 원자적 재고 차감 (캐시 미스 시 DB에서 로드 후 차감)
+     */
+    private Long decrementStockAtomic(String stockKey, Ticket ticket) {
+        try {
+            // 캐시 미스 확인 및 초기화
+            Object value = redisTemplate.opsForValue().get(stockKey);
+            if (value == null) {
+                Long stock = ticket.getStock();
+                redisTemplate.opsForValue().set(stockKey, stock, Duration.ofMinutes(30));
+                log.debug("Stock loaded from DB to Redis: ticketId={}, stock={}", ticket.getId(), stock);
+            }
+
+            // 원자적 차감
+            return redisTemplate.opsForValue().decrement(stockKey);
+
+        } catch (Exception e) {
+            log.error("Failed to decrement stock in Redis: key={}, error={}", stockKey, e.getMessage(), e);
             return null;
         }
     }
