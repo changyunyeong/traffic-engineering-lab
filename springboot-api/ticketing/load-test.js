@@ -63,7 +63,7 @@ const TICKETS = [
     { id: 11, name: 'IU R석', eventId: 4, initialStock: 150 },
 ];
 
-const MAX_USER_ID = 10000;  // ✅ 10,000명의 사용자 풀
+const MAX_USER_ID = 10000;  // 10,000명의 사용자 풀
 
 export function setup() {
     console.log('부하 테스트 시작 (현실적 시나리오)');
