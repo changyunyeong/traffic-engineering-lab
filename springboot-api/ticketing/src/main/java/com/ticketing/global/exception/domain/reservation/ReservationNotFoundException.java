@@ -1,4 +1,4 @@
-package com.ticketing.global.exception.domain;
+package com.ticketing.global.exception.domain.reservation;
 
 import com.ticketing.global.exception.BusinessException;
 
