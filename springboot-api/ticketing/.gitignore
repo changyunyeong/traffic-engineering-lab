@@ -43,7 +43,7 @@ out/
 
 # 민감한 설정 파일
 src/main/resources/application-local.yml
-prometheus
+prometheus/prometheus.yml
 
 # db 관련 파일
 *.sql
