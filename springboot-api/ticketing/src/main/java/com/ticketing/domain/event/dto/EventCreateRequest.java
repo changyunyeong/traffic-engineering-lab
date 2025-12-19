@@ -6,10 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class EventCreateRequest {
 
     @NotBlank(message = "이벤트 제목은 필수입니다")

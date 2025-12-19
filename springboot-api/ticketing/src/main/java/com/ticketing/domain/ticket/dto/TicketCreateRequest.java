@@ -3,10 +3,7 @@ package com.ticketing.domain.ticket.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class TicketCreateRequest {
 
     @NotNull(message = "이벤트 ID는 필수입니다")

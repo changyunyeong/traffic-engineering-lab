@@ -3,10 +3,7 @@ package com.ticketing.domain.reservation.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
 public class ReservationRequest {
 
     @NotNull(message = "티켓 ID는 필수입니다")

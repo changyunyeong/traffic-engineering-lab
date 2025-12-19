@@ -4,10 +4,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class TicketResponse {
 
     private Long id;
