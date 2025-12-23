@@ -21,7 +21,7 @@ spring:
     endpoints:
       web:
         exposure:
-          include: health,prometheus,metrics,info
+          include: health,prometheus,metrics,info,mappings
         base-path: /actuator
     endpoint:
         health:
