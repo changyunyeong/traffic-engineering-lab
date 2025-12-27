@@ -3,3 +3,4 @@ venv
 __pycache__/
 notebooks/.ipynb_checkpoints
 .DS_Store
+config.py
