@@ -33,8 +33,8 @@ class ReservationData(BaseModel):
     user_id: int
     event_id: int
     ticket_id: int
-    price: float
-    purchase_time: datetime
+    # price: float
+    # purchase_time: datetime
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
 
@@ -56,7 +56,7 @@ class AnomalyDetectionResponse(BaseModel):
     total_checked: int
     anomalies_found: int
     results: List[AnomalyResult]
-    checked_at: datetime
+    # checked_at: datetime
 
 
 # ==================== 학습 데이터 ====================
