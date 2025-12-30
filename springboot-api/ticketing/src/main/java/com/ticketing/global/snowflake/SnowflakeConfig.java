@@ -1,11 +1,10 @@
-package com.ticketing.global.config;
+package com.ticketing.global.snowflake;
 
-import com.ticketing.global.snowflake.Snowflake;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TestDataConfig {
+public class SnowflakeConfig {
 
     @Bean
     public Snowflake snowflake() {
