@@ -1,5 +1,6 @@
 package com.ticketing.domain.reservation.service;
 
+import com.ticketing.domain.recommendation.service.RecommendationService;
 import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.domain.reservation.dto.ReservationRequest;
 import com.ticketing.domain.reservation.dto.ReservationResponse;
@@ -35,6 +36,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReservationService {
 
+    private final RecommendationService recommendationService;
     private final ReservationRepository reservationRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
@@ -118,6 +120,8 @@ public class ReservationService {
 
                 log.info("Reservation created successfully: id={}, userId={}, ticketId={}, remaining={}",
                         reservation.getId(), userId, ticketId, remaining);
+
+                recommendationService.invalidateCache(userId);
 
                 return convertToResponse(reservation);
             });
