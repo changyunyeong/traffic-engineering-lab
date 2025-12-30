@@ -12,16 +12,16 @@ spring:
         format_sql: true
         default_batch_fetch_size: 100
         jdbc:
-          batch_size: 20
+          batch_size: 500
         order_inserts: true
         order_updates: true
 
-  # Actuator 설정
+  # Actuator
   management:
     endpoints:
       web:
         exposure:
-          include: health,prometheus,metrics,info
+          include: health,prometheus,metrics,info,mappings
         base-path: /actuator
     endpoint:
         health:
@@ -34,6 +34,13 @@ spring:
           enabled: true
       tags:
         application: ${spring.application.name}
+
+  mvc:
+    throw-exception-if-no-handler-found: false
+    static-path-pattern: /static/**
+  web:
+    resources:
+      add-mappings: false
 
 # Logging
 logging:
@@ -51,3 +58,36 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     operations-sorter: method
+
+# FastAPI
+fastapi:
+  base-url: http://localhost:8000
+  timeout:
+    connect: 5000  # 5초
+    read: 10000    # 10초
+    write: 10000   # 10초
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+    instances:
+      recommendationService:
+        baseConfig: default
+
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 1s
+        retryExceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+    instances:
+      recommendationService:
+        baseConfig: default

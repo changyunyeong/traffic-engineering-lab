@@ -20,7 +20,6 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 255)
@@ -39,4 +38,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Reservation> reservations = new ArrayList<>();
+
+    public static User create(Long id, String email, String name, String phone_number) {
+        User user = new User();
+        user.id = id;
+        user.email = email;
+        user.name = name;
+        user.phoneNumber = phone_number;
+        user.createdAt = LocalDateTime.now();
+        return user;
+    }
 }

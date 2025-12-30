@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +37,6 @@ public class Reservation {
     @Builder.Default
     private ReservationStatus status = ReservationStatus.PENDING;
 
-    @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -63,10 +61,6 @@ public class Reservation {
         }
         this.status = ReservationStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
-    }
-
-    public boolean isPending() {
-        return status == ReservationStatus.PENDING;
     }
 
     public boolean isExpired() {
