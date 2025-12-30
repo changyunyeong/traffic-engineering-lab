@@ -5,10 +5,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ReservationResponse {
 
     private Long id;

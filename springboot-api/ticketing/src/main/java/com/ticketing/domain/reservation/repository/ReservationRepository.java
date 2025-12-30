@@ -1,17 +1,15 @@
 package com.ticketing.domain.reservation.repository;
 
-import com.ticketing.domain.reservation.domain.Reservation;
+import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.global.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
@@ -30,12 +28,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "AND r.createdAt < :expiryTime")
     List<Reservation> findExpiredReservations(@Param("expiryTime") LocalDateTime expiryTime);
 
-    // 사용자의 특정 티켓 중복 예약 확인
+    // 사용자의 특정 티켓 활성 예약 확인
     @Query("SELECT r FROM Reservation r " +
             "WHERE r.user.id = :userId " +
             "AND r.ticket.id = :ticketId " +
-            "AND r.status IN ('PENDING', 'CONFIRMED')")
-    Optional<Reservation> findActiveReservation(
+            "AND r.status IN ('PENDING', 'CONFIRMED') " +
+            "ORDER BY r.createdAt DESC")
+    List<Reservation> findActiveReservations(
             @Param("userId") Long userId,
             @Param("ticketId") Long ticketId
     );

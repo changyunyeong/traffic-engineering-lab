@@ -1,6 +1,7 @@
 package com.ticketing.global.exception;
 
 import com.ticketing.global.dto.ApiResponse;
+import com.ticketing.global.exception.domain.LockAcquisitionException;
 import com.ticketing.global.exception.domain.OutOfStockException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(e.getMessage()));
+    }
+
+    // 락 획득 실패 예외 (429 Too Many Requests)
+    @ExceptionHandler(LockAcquisitionException.class)
+    public ResponseEntity<ApiResponse<Void>> handleLockAcquisitionException(LockAcquisitionException e) {
+        log.warn("Lock acquisition failed: {}", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                 .body(ApiResponse.error(e.getMessage()));
     }
 

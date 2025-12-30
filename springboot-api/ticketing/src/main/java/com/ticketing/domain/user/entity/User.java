@@ -1,6 +1,6 @@
-package com.ticketing.domain.user.domain;
+package com.ticketing.domain.user.entity;
 
-import com.ticketing.domain.reservation.domain.Reservation;
+import com.ticketing.domain.reservation.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

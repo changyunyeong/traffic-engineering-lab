@@ -1,7 +1,7 @@
-package com.ticketing.domain.reservation.domain;
+package com.ticketing.domain.reservation.entity;
 
-import com.ticketing.domain.ticket.domain.Ticket;
-import com.ticketing.domain.user.domain.User;
+import com.ticketing.domain.ticket.entity.Ticket;
+import com.ticketing.domain.user.entity.User;
 import com.ticketing.global.enums.ReservationStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,16 +48,18 @@ public class Reservation {
 
     // 비즈니스 메서드
     public void confirm() {
+
         if (status != ReservationStatus.PENDING) {
-            throw new IllegalStateException("대기 중인 예약만 확정할 수 있습니다");
+            throw new IllegalStateException("대기 중인 예약만 확정할 수 있습니다.");
         }
         this.status = ReservationStatus.CONFIRMED;
         this.confirmedAt = LocalDateTime.now();
     }
 
     public void cancel() {
+
         if (status == ReservationStatus.CANCELLED) {
-            throw new IllegalStateException("이미 취소된 예약입니다");
+            throw new IllegalStateException("이미 취소된 예약입니다.");
         }
         this.status = ReservationStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
@@ -68,6 +70,7 @@ public class Reservation {
     }
 
     public boolean isExpired() {
+
         if (status != ReservationStatus.PENDING) {
             return false;
         }

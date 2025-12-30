@@ -1,6 +1,6 @@
-package com.ticketing.domain.event.domain;
+package com.ticketing.domain.event.entity;
 
-import com.ticketing.domain.ticket.domain.Ticket;
+import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.global.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;

@@ -5,6 +5,7 @@ import com.ticketing.domain.event.dto.EventResponse;
 import com.ticketing.domain.event.service.EventService;
 import com.ticketing.global.dto.ApiResponse;
 import com.ticketing.global.dto.PageResponse;
+import com.ticketing.global.enums.Category;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -66,7 +67,7 @@ public class EventController {
     @Operation(summary = "카테고리별 이벤트 조회")
     @GetMapping("/category/{category}")
     public ApiResponse<PageResponse<EventResponse>> getEventsByCategory(
-            @PathVariable String category,
+            @PathVariable Category category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 

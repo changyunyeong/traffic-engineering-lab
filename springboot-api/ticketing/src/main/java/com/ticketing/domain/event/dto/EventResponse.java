@@ -7,10 +7,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter @Setter
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class EventResponse {
 
     private Long id;
