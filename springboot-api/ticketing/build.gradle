@@ -27,11 +27,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Database
-    implementation 'org.postgresql:postgresql'
-    implementation 'com.zaxxer:HikariCP:5.1.0'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
-    // Redis & Distributed Lock
+    // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.25.0'
 
     // Kafka
@@ -40,13 +41,20 @@ dependencies {
     // Monitoring
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // DevTools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:postgresql:1.19.3'
 }
 
 tasks.named('test') {

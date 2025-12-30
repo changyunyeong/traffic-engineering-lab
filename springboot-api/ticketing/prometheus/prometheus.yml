@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Spring Boot Actuator
+  - job_name: 'springboot-api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['springboot-api:8080']
+
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
