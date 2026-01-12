@@ -4,6 +4,7 @@ import com.ticketing.domain.user.dto.UserCreateRequest;
 import com.ticketing.domain.user.dto.UserResponse;
 import com.ticketing.domain.user.entity.User;
 import com.ticketing.domain.user.repository.UserRepository;
+import com.ticketing.global.snowflake.Snowflake;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private Snowflake snowflake;
 
     public UserResponse joinUser(UserCreateRequest request) {
 
         User joinUser = User.builder()
+                .id(snowflake.nextId())
                 .name(request.getName())
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())

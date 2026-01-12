@@ -6,6 +6,7 @@ import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.ticket.dto.TicketCreateRequest;
 import com.ticketing.domain.ticket.dto.TicketResponse;
 import com.ticketing.domain.ticket.repository.TicketRepository;
+import com.ticketing.global.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +27,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final EventRepository eventRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final Snowflake snowflake;
 
     private static final String STOCK_KEY_PREFIX = "ticket:stock:";
 
@@ -39,6 +41,7 @@ public class TicketService {
                 .orElseThrow(() -> new IllegalArgumentException("이벤트를 찾을 수 없습니다"));
 
         Ticket ticket = Ticket.builder()
+                .id(snowflake.nextId())
                 .event(event)
                 .name(request.getName())
                 .stock(request.getStock())

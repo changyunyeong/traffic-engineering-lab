@@ -7,6 +7,7 @@ import com.ticketing.domain.event.repository.EventRepository;
 import com.ticketing.domain.ticket.repository.TicketRepository;
 import com.ticketing.global.enums.Category;
 import com.ticketing.global.exception.domain.event.EventNotFoundException;
+import com.ticketing.global.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,6 +27,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final TicketRepository ticketRepository;
+    private final Snowflake snowflake;
 
     /**
      * 이벤트 생성
@@ -34,6 +36,7 @@ public class EventService {
     public EventResponse createEvent(EventCreateRequest request) {
 
         Event event = Event.builder()
+                .id(snowflake.nextId())
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .category(request.getCategory())
