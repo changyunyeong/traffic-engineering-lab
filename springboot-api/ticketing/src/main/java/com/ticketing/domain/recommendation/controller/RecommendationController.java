@@ -30,31 +30,28 @@ public class RecommendationController {
 
     @GetMapping("/{userId}")
     @Operation(summary = "FastAPI Anomaly Detection용 예약 데이터 조회")
-    public ResponseEntity<RecommendationResponse> getRecommendations(
+    public ApiResponse<RecommendationResponse> getRecommendations(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "10") Integer limit
     ) {
         RecommendationResponse response = recommendationService.getRecommendations(userId, limit);
-        return ResponseEntity.ok(response);
+        return ApiResponse.success(response);
     }
 
     @PostMapping("/train")
     @Operation(summary = "FastAPI 추천 모델 학습 트리거")
-    public ResponseEntity<Map<String, Object>> trainModel(
+    public ApiResponse<Map<String, Object>> trainModel(
             @RequestParam(defaultValue = "false") boolean forceRetrain
     ) {
         Map<String, Object> result = recommendationService.trainModel(forceRetrain);
-        return ResponseEntity.ok(result);
+        return ApiResponse.success(result);
     }
 
     @GetMapping("/health")
     @Operation(summary = "FastAPI 헬스 체크")
-    public ResponseEntity<Map<String, Object>> healthCheck() {
+    public ApiResponse<Void> healthCheck() {
         boolean isHealthy = recommendationService.checkHealth();
-        return ResponseEntity.ok(Map.of(
-                "fastapi_status", isHealthy ? "healthy" : "unhealthy",
-                "connected", isHealthy
-        ));
+        return ApiResponse.success(null);
     }
 
     @GetMapping("/for-anomaly-detection")
