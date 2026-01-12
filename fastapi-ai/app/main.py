@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.api.v1 import recommendation, anomaly
+from app.api.v1 import recommendation, anomaly, rag, vlm
 
 # 로깅 설정
 logging.basicConfig(
@@ -44,6 +44,8 @@ app.add_middleware(
 # 라우터 등록
 app.include_router(recommendation.router, prefix="/api/v1")
 app.include_router(anomaly.router, prefix="/api/v1")
+app.include_router(rag.router, prefix="/api/v1")
+app.include_router(vlm.router, prefix="/api/v1")
 
 
 @app.get("/")
