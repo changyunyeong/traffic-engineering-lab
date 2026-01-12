@@ -70,8 +70,154 @@ class TrainingResponse(BaseModel):
     status: str
     metrics: dict
     trained_at: datetime
+    
+
+# ==================== RAG ====================
+class SearchRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=500, description="검색 쿼리")
+    top_k: int = Field(10, ge=1, le=50, description="반환할 결과 수")
+    category: Optional[str] = Field(None, description="카테고리 필터 (CONCERT, MUSICAL, SPORTS, ETC)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "query": "신나는 록 콘서트",
+                "top_k": 5,
+                "category": "CONCERT"
+            }
+        }
 
 
+class SearchResult(BaseModel):
+    event_id: int
+    title: str
+    category: str
+    venue: str
+    event_date: str
+    similarity_score: float = Field(..., ge=0, le=1)
+    rank: int
+
+
+class SearchResponse(BaseModel):
+    query: str
+    total_results: int
+    results: List[SearchResult]
+    search_time_ms: float
+    searched_at: datetime
+
+
+class IndexResponse(BaseModel):
+    indexed: int
+    total_events: int
+    message: str
+    indexed_at: datetime
+
+
+class SimilarEventRequest(BaseModel):
+    event_id: int = Field(..., gt=0, description="기준 이벤트 ID")
+    top_k: int = Field(5, ge=1, le=20, description="반환할 결과 수")
+
+
+# ==================== VLM ====================
+class MoodScore(BaseModel):
+    label: str
+    score: float = Field(..., ge=0, le=1)
+
+
+class ImageAnalysisResponse(BaseModel):
+    moods: List[MoodScore] = Field(..., description="분위기 분석 결과")
+    categories: List[MoodScore] = Field(..., description="카테고리 분류 결과")
+    audiences: List[MoodScore] = Field(..., description="타겟 관객 분석")
+    description: str = Field(..., description="이미지 설명")
+    analyzed_at: datetime
+
+
+class ImageSearchResult(BaseModel):
+    event_id: int
+    title: Optional[str] = None
+    category: Optional[str] = None
+    similarity_score: float = Field(..., ge=-1, le=1)
+    analysis: Optional[dict] = None
+
+
+class ImageSearchResponse(BaseModel):
+    total_results: int
+    results: List[ImageSearchResult]
+    searched_at: datetime
+
+
+class RegisterImageResponse(BaseModel):
+    event_id: int
+    analysis: dict
+    image_path: str
+    registered_at: datetime
+
+
+class TextSearchRequest(BaseModel):
+    query: str = Field(..., min_length=1, max_length=200, description="검색 텍스트")
+    top_k: int = Field(5, ge=1, le=20, description="반환할 결과 수")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "query": "화려한 콘서트 포스터",
+                "top_k": 5
+            }
+        }
+
+
+class ManualRegisterRequest(BaseModel):
+    event_id: int = Field(..., gt=0, description="이벤트 ID")
+    category: str = Field(..., description="카테고리 (스포츠, 콘서트, 뮤지컬 등)")
+    mood: str = Field(..., description="분위기 (열정적인, 신나는, 감동적인 등)")
+    audience: str = Field(..., description="타겟 관객 (가족, 연인, 친구, 팬덤 등)")
+    title: Optional[str] = Field(None, description="이벤트 제목")
+    description: Optional[str] = Field(None, description="이벤트 설명")
+    image_url: Optional[str] = Field(None, description="이미지 URL (선택)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "event_id": 1,
+                "category": "스포츠",
+                "mood": "열정적인",
+                "audience": "팬덤",
+                "title": "삼성 라이온즈 vs LG 트윈스",
+                "description": "KBO 리그 정규시즌"
+            }
+        }
+
+
+class BulkRegisterRequest(BaseModel):
+    events: List[ManualRegisterRequest] = Field(..., description="등록할 이벤트 목록")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "events": [
+                    {"event_id": 1, "category": "스포츠", "mood": "열정적인", "audience": "팬덤", "title": "삼성 vs LG"},
+                    {"event_id": 2, "category": "콘서트", "mood": "신나는", "audience": "팬덤", "title": "BTS 콘서트"},
+                    {"event_id": 3, "category": "뮤지컬", "mood": "감동적인", "audience": "연인", "title": "레미제라블"}
+                ]
+            }
+        }
+
+
+class ManualRegisterResponse(BaseModel):
+    event_id: int
+    category: str
+    mood: str
+    audience: str
+    registered_at: datetime
+
+# ==================== AI Model Responses ====================
+class StatsResponse(BaseModel):
+    status: str
+    collection_name: Optional[str] = None
+    document_count: int = 0
+    embedding_model: Optional[str] = None
+
+    
 '''
 Field(...) = not null
 Field(10) = default value 10 
