@@ -16,7 +16,7 @@ public class EventCreateRequest {
     @Size(max = 2000, message = "설명은 2000자를 초과할 수 없습니다")
     private String description;
 
-    @NotBlank(message = "카테고리는 필수입니다")
+    @NotNull(message = "카테고리는 필수입니다")
     private Category category;
 
     @NotBlank(message = "장소는 필수입니다")
