@@ -1,17 +1,17 @@
 package com.ticketing.test.service;
 
 import com.ticketing.domain.event.repository.EventRepository;
+import com.ticketing.test.dto.InitProgress;
 import com.ticketing.test.dto.data.DataInitRequest;
 import com.ticketing.test.dto.data.DataInitResponse;
-import com.ticketing.test.dto.InitProgress;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service

@@ -1,17 +1,17 @@
 package com.ticketing.domain.reservation.service;
 
 import com.ticketing.domain.recommendation.service.RecommendationService;
-import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.domain.reservation.dto.ReservationRequest;
 import com.ticketing.domain.reservation.dto.ReservationResponse;
+import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.domain.reservation.repository.ReservationRepository;
 import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.ticket.repository.TicketRepository;
 import com.ticketing.domain.user.entity.User;
 import com.ticketing.domain.user.repository.UserRepository;
 import com.ticketing.global.enums.ReservationStatus;
-import com.ticketing.global.exception.domain.reservation.DuplicateReservationException;
 import com.ticketing.global.exception.domain.OutOfStockException;
+import com.ticketing.global.exception.domain.reservation.DuplicateReservationException;
 import com.ticketing.global.exception.domain.reservation.ReservationNotFoundException;
 import com.ticketing.global.exception.domain.ticket.TicketNotFoundException;
 import com.ticketing.global.exception.domain.user.UserNotFoundException;

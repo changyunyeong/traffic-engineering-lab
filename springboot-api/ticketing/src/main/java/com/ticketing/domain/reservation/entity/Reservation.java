@@ -4,8 +4,10 @@ import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.user.entity.User;
 import com.ticketing.global.enums.ReservationStatus;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 import http from 'k6/http';
-import { check, group, sleep } from 'k6';
-import { Rate, Trend, Counter } from 'k6/metrics';
+import {check, group, sleep} from 'k6';
+import {Counter, Rate, Trend} from 'k6/metrics';
 
 // 커스텀 메트릭
 const reservationSuccessRate = new Rate('reservation_success_rate');

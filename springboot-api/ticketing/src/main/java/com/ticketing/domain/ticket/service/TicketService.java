@@ -2,9 +2,9 @@ package com.ticketing.domain.ticket.service;
 
 import com.ticketing.domain.event.entity.Event;
 import com.ticketing.domain.event.repository.EventRepository;
-import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.ticket.dto.TicketCreateRequest;
 import com.ticketing.domain.ticket.dto.TicketResponse;
+import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.ticket.repository.TicketRepository;
 import com.ticketing.global.snowflake.Snowflake;
 import lombok.RequiredArgsConstructor;

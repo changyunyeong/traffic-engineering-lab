@@ -3,8 +3,8 @@ package com.ticketing.test.service;
 import com.ticketing.domain.user.entity.User;
 import com.ticketing.domain.user.repository.UserRepository;
 import com.ticketing.global.snowflake.Snowflake;
-import com.ticketing.test.dto.data.DataInitRequest;
 import com.ticketing.test.dto.InitProgress;
+import com.ticketing.test.dto.data.DataInitRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service

@@ -5,8 +5,8 @@ import com.ticketing.domain.event.repository.EventRepository;
 import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.domain.ticket.repository.TicketRepository;
 import com.ticketing.global.snowflake.Snowflake;
-import com.ticketing.test.dto.data.DataInitRequest;
 import com.ticketing.test.dto.InitProgress;
+import com.ticketing.test.dto.data.DataInitRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service

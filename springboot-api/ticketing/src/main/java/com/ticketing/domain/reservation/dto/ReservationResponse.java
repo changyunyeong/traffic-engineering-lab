@@ -1,7 +1,10 @@
 package com.ticketing.domain.reservation.dto;
 
 import com.ticketing.global.enums.ReservationStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

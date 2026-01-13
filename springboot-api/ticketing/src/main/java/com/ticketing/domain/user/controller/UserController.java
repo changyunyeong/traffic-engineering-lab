@@ -1,7 +1,5 @@
 package com.ticketing.domain.user.controller;
 
-import com.ticketing.domain.reservation.dto.ReservationRequest;
-import com.ticketing.domain.reservation.dto.ReservationResponse;
 import com.ticketing.domain.user.dto.UserCreateRequest;
 import com.ticketing.domain.user.dto.UserResponse;
 import com.ticketing.domain.user.service.UserService;

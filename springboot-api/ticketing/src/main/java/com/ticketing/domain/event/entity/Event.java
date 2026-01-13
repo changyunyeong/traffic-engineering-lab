@@ -3,7 +3,10 @@ package com.ticketing.domain.event.entity;
 import com.ticketing.domain.ticket.entity.Ticket;
 import com.ticketing.global.enums.Category;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 

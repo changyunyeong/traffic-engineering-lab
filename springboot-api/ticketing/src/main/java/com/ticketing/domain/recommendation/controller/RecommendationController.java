@@ -2,23 +2,14 @@ package com.ticketing.domain.recommendation.controller;
 
 import com.ticketing.domain.recommendation.dto.RecommendationResponse;
 import com.ticketing.domain.recommendation.service.RecommendationService;
-import com.ticketing.domain.reservation.entity.Reservation;
-import com.ticketing.domain.reservation.repository.ReservationRepository;
 import com.ticketing.global.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -50,7 +41,6 @@ public class RecommendationController {
     @GetMapping("/health")
     @Operation(summary = "FastAPI 헬스 체크")
     public ApiResponse<Void> healthCheck() {
-        boolean isHealthy = recommendationService.checkHealth();
         return ApiResponse.success(null);
     }
 

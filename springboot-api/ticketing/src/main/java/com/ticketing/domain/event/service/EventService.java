@@ -1,8 +1,8 @@
 package com.ticketing.domain.event.service;
 
-import com.ticketing.domain.event.entity.Event;
 import com.ticketing.domain.event.dto.EventCreateRequest;
 import com.ticketing.domain.event.dto.EventResponse;
+import com.ticketing.domain.event.entity.Event;
 import com.ticketing.domain.event.repository.EventRepository;
 import com.ticketing.domain.ticket.repository.TicketRepository;
 import com.ticketing.global.dto.PageResponse;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

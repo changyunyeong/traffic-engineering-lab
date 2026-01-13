@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticketing.domain.event.entity.Event;
 import com.ticketing.domain.event.repository.EventRepository;
-import com.ticketing.domain.recommendation.dto.RecommendationResponse;
 import com.ticketing.domain.recommendation.dto.EventRecommendation;
+import com.ticketing.domain.recommendation.dto.RecommendationResponse;
 import com.ticketing.domain.reservation.entity.Reservation;
 import com.ticketing.domain.reservation.repository.ReservationRepository;
 import com.ticketing.global.client.FastApiClient;
@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
