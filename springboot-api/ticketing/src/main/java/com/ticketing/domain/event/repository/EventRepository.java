@@ -31,4 +31,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "GROUP BY e " +
             "ORDER BY COUNT(r) DESC")
     List<Event> findPopularEvents(@Param("now") LocalDateTime now, Pageable pageable);
+
+    Page<Event> findAll(Pageable pageable);
 }

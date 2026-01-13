@@ -44,46 +44,33 @@ public class EventController {
 
     @Operation(summary = "전체 이벤트 조회", description = "모든 이벤트를 페이징하여 조회합니다")
     @GetMapping
-    public ApiResponse<PageResponse<EventResponse>> getAllEvents(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "eventDate") String sortBy) {
+    public ApiResponse<PageResponse<EventResponse>> getAllEvents(@RequestParam(defaultValue = "0") Integer page) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        Page<EventResponse> events = eventService.getAllEvents(pageable);
+        PageResponse<EventResponse> events = eventService.getAllEvents(page);
 
-        PageResponse<EventResponse> pageResponse = PageResponse.<EventResponse>builder()
-                .content(events.getContent())
-                .page(events.getNumber())
-                .size(events.getSize())
-                .totalElements(events.getTotalElements())
-                .totalPages(events.getTotalPages())
-                .last(events.isLast())
-                .build();
-
-        return ApiResponse.success(pageResponse);
+        return ApiResponse.success(events);
     }
 
     @Operation(summary = "카테고리별 이벤트 조회")
     @GetMapping("/category/{category}")
     public ApiResponse<PageResponse<EventResponse>> getEventsByCategory(
             @PathVariable Category category,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "0") Integer page) {
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<EventResponse> events = eventService.getEventsByCategory(category, pageable);
+        PageResponse<EventResponse> events = eventService.getEventsByCategory(category, page);
 
-        PageResponse<EventResponse> pageResponse = PageResponse.<EventResponse>builder()
-                .content(events.getContent())
-                .page(events.getNumber())
-                .size(events.getSize())
-                .totalElements(events.getTotalElements())
-                .totalPages(events.getTotalPages())
-                .last(events.isLast())
-                .build();
+        return ApiResponse.success(events);
+    }
 
-        return ApiResponse.success(pageResponse);
+    @Operation(summary = "이벤트 검색", description = "제목으로 이벤트를 검색합니다")
+    @GetMapping("/search")
+    public ApiResponse<PageResponse<EventResponse>> searchEvents(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") Integer page) {
+
+        PageResponse<EventResponse> events = eventService.searchEvents(keyword, page);
+
+        return ApiResponse.success(events);
     }
 
     @Operation(summary = "예정된 이벤트 조회", description = "미래의 이벤트만 조회합니다")
@@ -93,25 +80,4 @@ public class EventController {
         return ApiResponse.success(events);
     }
 
-    @Operation(summary = "이벤트 검색", description = "제목으로 이벤트를 검색합니다")
-    @GetMapping("/search")
-    public ApiResponse<PageResponse<EventResponse>> searchEvents(
-            @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<EventResponse> events = eventService.searchEvents(keyword, pageable);
-
-        PageResponse<EventResponse> pageResponse = PageResponse.<EventResponse>builder()
-                .content(events.getContent())
-                .page(events.getNumber())
-                .size(events.getSize())
-                .totalElements(events.getTotalElements())
-                .totalPages(events.getTotalPages())
-                .last(events.isLast())
-                .build();
-
-        return ApiResponse.success(pageResponse);
-    }
 }

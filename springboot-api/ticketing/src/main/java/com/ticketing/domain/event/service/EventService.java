@@ -5,6 +5,7 @@ import com.ticketing.domain.event.dto.EventCreateRequest;
 import com.ticketing.domain.event.dto.EventResponse;
 import com.ticketing.domain.event.repository.EventRepository;
 import com.ticketing.domain.ticket.repository.TicketRepository;
+import com.ticketing.global.dto.PageResponse;
 import com.ticketing.global.enums.Category;
 import com.ticketing.global.exception.domain.event.EventNotFoundException;
 import com.ticketing.global.snowflake.Snowflake;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,19 +69,60 @@ public class EventService {
     /**
      * 전체 이벤트 조회
      */
-    public Page<EventResponse> getAllEvents(Pageable pageable) {
+    public PageResponse<EventResponse> getAllEvents(Integer page) {
 
-        return eventRepository.findAll(pageable)
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
+
+        Page<EventResponse> events = eventRepository.findAll(pageRequest)
                 .map(this::convertToResponse);
+
+        return PageResponse.<EventResponse>builder()
+                .content(events.getContent())
+                .page(events.getNumber())
+                .size(events.getSize())
+                .totalElements(events.getTotalElements())
+                .totalPages(events.getTotalPages())
+                .last(events.isLast())
+                .build();
     }
 
     /**
      * 카테고리별 조회
      */
-    public Page<EventResponse> getEventsByCategory(Category category, Pageable pageable) {
+    public PageResponse<EventResponse> getEventsByCategory(Category category, Integer page) {
 
-        return eventRepository.findByCategory(category, pageable)
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
+
+        Page<EventResponse> events = eventRepository.findByCategory(category, pageRequest)
                 .map(this::convertToResponse);
+
+        return PageResponse.<EventResponse>builder()
+                .content(events.getContent())
+                .page(events.getNumber())
+                .size(events.getSize())
+                .totalElements(events.getTotalElements())
+                .totalPages(events.getTotalPages())
+                .last(events.isLast())
+                .build();
+    }
+
+    /**
+     * 이벤트 검색
+     */
+    public PageResponse<EventResponse> searchEvents(String keyword, Integer page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
+        Page<EventResponse> events = eventRepository.findByTitleContainingIgnoreCase(keyword, pageRequest)
+                .map(this::convertToResponse);
+
+        return PageResponse.<EventResponse>builder()
+                .content(events.getContent())
+                .page(events.getNumber())
+                .size(events.getSize())
+                .totalElements(events.getTotalElements())
+                .totalPages(events.getTotalPages())
+                .last(events.isLast())
+                .build();
     }
 
     /**
@@ -89,15 +133,6 @@ public class EventService {
         return eventRepository.findUpcomingEvents(LocalDateTime.now()).stream()
                 .map(this::convertToResponse)
                 .toList();
-    }
-
-    /**
-     * 이벤트 검색
-     */
-    public Page<EventResponse> searchEvents(String keyword, Pageable pageable) {
-
-        return eventRepository.findByTitleContainingIgnoreCase(keyword, pageable)
-                .map(this::convertToResponse);
     }
 
     /**
