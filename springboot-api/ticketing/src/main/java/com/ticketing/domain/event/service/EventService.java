@@ -72,8 +72,12 @@ public class EventService {
 
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
 
-        Page<EventResponse> events = eventRepository.findAll(pageRequest)
-                .map(this::convertToResponse);
+        Page<Object[]> results = eventRepository.findAllWithTotalStock(pageRequest);
+        Page<EventResponse> events = results.map(row -> {
+            Event event = (Event) row[0];
+            Long totalStock = ((Number) row[1]).longValue();
+            return convertToResponse(event, totalStock);
+        });
 
         return PageResponse.<EventResponse>builder()
                 .content(events.getContent())
@@ -92,8 +96,12 @@ public class EventService {
 
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
 
-        Page<EventResponse> events = eventRepository.findByCategory(category, pageRequest)
-                .map(this::convertToResponse);
+        Page<Object[]> results = eventRepository.findByCategoryWithTotalStock(category, pageRequest);
+        Page<EventResponse> events = results.map(row -> {
+            Event event = (Event) row[0];
+            Long totalStock = ((Number) row[1]).longValue();
+            return convertToResponse(event, totalStock);
+        });
 
         return PageResponse.<EventResponse>builder()
                 .content(events.getContent())
@@ -111,8 +119,13 @@ public class EventService {
     public PageResponse<EventResponse> searchEvents(String keyword, Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by("eventDate").ascending());
-        Page<EventResponse> events = eventRepository.findByTitleContainingIgnoreCase(keyword, pageRequest)
-                .map(this::convertToResponse);
+
+        Page<Object[]> results = eventRepository.findByTitleContainingWithTotalStock(keyword, pageRequest);
+        Page<EventResponse> events = results.map(row -> {
+            Event event = (Event) row[0];
+            Long totalStock = ((Number) row[1]).longValue();
+            return convertToResponse(event, totalStock);
+        });
 
         return PageResponse.<EventResponse>builder()
                 .content(events.getContent())
@@ -129,18 +142,27 @@ public class EventService {
      */
     public List<EventResponse> getUpcomingEvents() {
 
-        return eventRepository.findUpcomingEvents(LocalDateTime.now()).stream()
-                .map(this::convertToResponse)
+        return eventRepository.findUpcomingEventsWithTotalStock(LocalDateTime.now()).stream()
+                .map(row -> {
+                    Event event = (Event) row[0];
+                    Long totalStock = ((Number) row[1]).longValue();
+                    return convertToResponse(event, totalStock);
+                })
                 .toList();
     }
 
     /**
-     * Entity -> Response 변환
+     * Entity -> Response 변환 (단건 조회용 - N+1 발생)
      */
     private EventResponse convertToResponse(Event event) {
-
         Long totalStock = ticketRepository.getTotalStockByEventId(event.getId());
+        return convertToResponse(event, totalStock);
+    }
 
+    /**
+     * Entity -> Response 변환 (목록 조회용 - N+1 해결)
+     */
+    private EventResponse convertToResponse(Event event, Long totalStock) {
         return EventResponse.builder()
                 .id(event.getId())
                 .title(event.getTitle())

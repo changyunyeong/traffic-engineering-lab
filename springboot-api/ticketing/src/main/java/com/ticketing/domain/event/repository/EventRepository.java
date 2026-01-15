@@ -33,4 +33,19 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findPopularEvents(@Param("now") LocalDateTime now, Pageable pageable);
 
     Page<Event> findAll(Pageable pageable);
+
+    // N+1
+    @Query("SELECT e, COALESCE(SUM(t.stock), 0) FROM Event e LEFT JOIN e.tickets t GROUP BY e")
+    Page<Object[]> findAllWithTotalStock(Pageable pageable);
+
+    @Query("SELECT e, COALESCE(SUM(t.stock), 0) FROM Event e LEFT JOIN e.tickets t WHERE e.category = :category GROUP BY e")
+    Page<Object[]> findByCategoryWithTotalStock(@Param("category") Category category, Pageable pageable);
+
+    @Query("SELECT e, COALESCE(SUM(t.stock), 0) FROM Event e LEFT JOIN e.tickets t WHERE LOWER(e.title) LIKE LOWER(CONCAT('%', :title, '%')) GROUP BY e")
+    Page<Object[]> findByTitleContainingWithTotalStock(@Param("title") String title, Pageable pageable);
+
+    @Query("SELECT e, COALESCE(SUM(t.stock), 0) FROM Event e LEFT JOIN e.tickets t WHERE e.eventDate > :now GROUP BY e ORDER BY e.eventDate ASC")
+    List<Object[]> findUpcomingEventsWithTotalStock(@Param("now") LocalDateTime now);
+
+    // COALESCE: NULL 값을 0으로 변환
 }
